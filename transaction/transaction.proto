@@ -1,0 +1,31 @@
+//v
+syntax = "proto3";
+option go_package = "gitlab.com/jonathannobi/go/grpc/transaction";
+
+package transaction;
+
+message Transaction {
+  string body = 1;
+  string title = 2;
+  int32 amount = 3;
+}
+
+message Response {
+  string body = 1;
+}
+
+// Service adalah kumpulan dari func yg dipanggil oleh client 
+service Transactions {
+
+  // Simple rpc. client kirim dan menunggu response
+  rpc CreateTransaction(Transaction) returns (Response) {}
+
+  // Server Side Streaming. client kirim dan mendapatkan berbagai response sampai selesai. notice ada stream pada returns.
+  rpc ListTransaction(Transaction) returns (stream Response) {}
+
+  // Client Side Streaming. client kirim message secara bergantian dan server menunggu dapat semua sampai selesai. notice ada stream pada terima functions.
+  // rpc ExitTransaction(stream Message) returns (Message) {}
+
+  // Bidirectional Streaming. client dan server berdiri sendiri. bisa langsung memberikan response atau menunggu sampai selesai
+  // rpc StreamingVideo(stream Message) returns (Message) {}
+}
