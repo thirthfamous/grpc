@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	"log"
 	"time"
 
@@ -27,6 +28,10 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
+
+	header := metadata.New(map[string]string{"x-lang": "ID"})
+	// this is the critical step that includes your headers
+	ctx = metadata.NewOutgoingContext(context.Background(), header)
 
 	r, err := c.CreateTransaction(ctx, &pb.Transaction{
 		Title:  "join transaction",

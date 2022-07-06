@@ -7,6 +7,7 @@ import (
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"log"
 	"net"
@@ -19,10 +20,19 @@ type TransactionServer struct {
 	pb.UnimplementedTransactionsServer
 }
 
-func (d *TransactionServer) CreateTransaction(_ context.Context, trx *pb.Transaction) (*pb.Response, error) {
+func (d *TransactionServer) CreateTransaction(ctx context.Context, trx *pb.Transaction) (*pb.Response, error) {
 	log.Printf("Received: %v", trx.GetTitle())
 
-	panic("damn i got panic") // made up error
+	// getting the headers metadata
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		panic("No Context")
+	}
+	lang := md.Get("x-lang")[0] // metadata.Get returns an array of values for the key
+	fmt.Println("the language is : " + lang)
+
+	trx.ProtoMessage()
+	//panic("damn i got panic") // made up error
 	// Send Response to client
 	return &pb.Response{Body: trx.GetTitle() + trx.GetBody()}, nil
 }
